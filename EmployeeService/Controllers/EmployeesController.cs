@@ -1,24 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using EmployeeDataAccess;
+using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
-using EmployeeDataAccess;
 
 namespace EmployeeService.Controllers
 {
     public class EmployeesController : ApiController
     {
-        public IEnumerable<Employee> Get()
+        [HttpGet]
+        public HttpResponseMessage LoadAllEmployees(string gender = "All")
         {
             using (EmployeeDBEntities entities = new EmployeeDBEntities())
             {
-                return entities.Employees.ToList();
+                switch (gender.ToLower())
+                {
+                    case "all":
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                            entities.Employees.ToList());
+
+                    case "male":
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                            entities.Employees.Where(x => x.Gender.ToLower() == "male").ToList());
+
+                    case "female":
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                            entities.Employees.Where(x => x.Gender.ToLower() == "female").ToList());
+
+                    default:
+                        return Request.CreateErrorResponse(HttpStatusCode.BadRequest,
+                            "Value for gender must be All, Male or Female." + gender + " is invalid");
+                }
             }
         }
 
-        public HttpResponseMessage Get(int id)
+        [HttpGet]
+        public HttpResponseMessage LoadEmployeeById(int id)
         {
             using (EmployeeDBEntities entities = new EmployeeDBEntities())
             {
