@@ -101,7 +101,7 @@ namespace EmployeeService.Controllers
             }
         }
 
-        public HttpResponseMessage Put(int id, [FromBody] Employee employee)
+        public HttpResponseMessage Put([FromBody]int id, [FromUri] Employee employee)
         {
 
             try
