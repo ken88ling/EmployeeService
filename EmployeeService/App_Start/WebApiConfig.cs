@@ -9,6 +9,7 @@ using Microsoft.Ajax.Utilities;
 using Microsoft.Owin.Security.OAuth;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using WebApiContrib.Formatting.Jsonp;
 
 namespace EmployeeService
 {
@@ -42,6 +43,9 @@ namespace EmployeeService
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
+
+            var jsonpFormatter= new JsonpMediaTypeFormatter(config.Formatters.JsonFormatter);
+            config.Formatters.Insert(0,jsonpFormatter);
 
             //config.Formatters.Add(new CustomJsonFormatter());
 
