@@ -1,21 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
+﻿using Microsoft.Owin.Security.OAuth;
+using System;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using System.Web.Http;
-using Microsoft.Ajax.Utilities;
-using Microsoft.Owin.Security.OAuth;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using WebApiContrib.Formatting.Jsonp;
+using System.Web.Http.Cors;
 
 namespace EmployeeService
 {
     public static class WebApiConfig
     {
-        public class CustomJsonFormatter:JsonMediaTypeFormatter
+        public class CustomJsonFormatter : JsonMediaTypeFormatter
         {
             public CustomJsonFormatter()
             {
@@ -44,8 +38,12 @@ namespace EmployeeService
                 defaults: new { id = RouteParameter.Optional }
             );
 
-            var jsonpFormatter= new JsonpMediaTypeFormatter(config.Formatters.JsonFormatter);
-            config.Formatters.Insert(0,jsonpFormatter);
+
+            EnableCorsAttribute cors = new EnableCorsAttribute("http://localhost:2913", "*", "*");
+            config.EnableCors(cors);
+
+            //var jsonpFormatter= new JsonpMediaTypeFormatter(config.Formatters.JsonFormatter);
+            //config.Formatters.Insert(0,jsonpFormatter);
 
             //config.Formatters.Add(new CustomJsonFormatter());
 
