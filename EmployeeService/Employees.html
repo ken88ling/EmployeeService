@@ -11,18 +11,29 @@
 
                 $('#btn')
                     .click(function () {
+
+                        var username = $('#txtUsername').val();
+                        var password = $('#txtPassword').val();
+
                         $.ajax({
                             type: 'GET',
-                            url: 'api/Employees',
+                            url: 'api/Employees/',
                             dataType: 'json',
+                            headers: {
+                                'Authorization' : 'Basic ' + btoa(username + ':' + password)
+                            },
                             success: function (data) {
-
                                 ulEmployees.empty();
-
                                 $.each(data, function (index, val) {
                                     var fullName = val.FirstName + ' ' + val.LastName;
-                                    ulEmployees.append('<li>' + fullName + '</li>');
+                                    ulEmployees.append('<li>' + fullName + ' (' + val.Gender + ')</li>');
                                 });
+                            },
+                            complete: function (jqXHR) {
+                                if (jqXHR.status == '401') {
+                                    ulEmployees.empty();
+                                    ulEmployees.append('<li style="color:red">' + jqXHR.status + ' : ' + jqXHR.statusText + '</li>');
+                                }
                             }
                         });
                     });
@@ -34,8 +45,14 @@
     </script>
 </head>
 <body>
-    <input id="btn" type="button" value="Get All Employees" />
-    <input id="btnClear" type="button" value="Clear" />
-    <ul id="ulEmployees"></ul>
+
+    <div>
+        Username : <input id="txtUsername" type="text" />
+        Password : <input id="txtPassword" type="password" />
+        <br /><br />
+        <input id="btn" type="button" value="Authenticate and Get Employees" />
+        <input id="btnClear" type="button" value="Clear" />
+        <ul id="ulEmployees"></ul>
+    </div>
 </body>
 </html>
