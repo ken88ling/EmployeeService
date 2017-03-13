@@ -3,27 +3,29 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading;
 using System.Web.Http;
 using System.Web.Http.Cors;
-using System.Web.Mvc;
 
 namespace EmployeeService.Controllers
 {
     [EnableCors("*", "*", "*")]
-    [RequireHttps]
+    //[RequireHttps]
     public class EmployeesController : ApiController
     {
         //[DisableCors]
+        [BasicAuthentication]
         [System.Web.Http.HttpGet]
         public HttpResponseMessage LoadAllEmployees(string gender = "All")
         {
+            string username = Thread.CurrentPrincipal.Identity.Name;
             using (EmployeeDBEntities entities = new EmployeeDBEntities())
             {
-                switch (gender.ToLower())
+                switch (username.ToLower())
                 {
-                    case "all":
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                            entities.Employees.ToList());
+                    //case "all":
+                    //    return Request.CreateResponse(HttpStatusCode.OK,
+                    //        entities.Employees.ToList());
 
                     case "male":
                         return Request.CreateResponse(HttpStatusCode.OK,
@@ -34,8 +36,9 @@ namespace EmployeeService.Controllers
                             entities.Employees.Where(x => x.Gender.ToLower() == "female").ToList());
 
                     default:
-                        return Request.CreateErrorResponse(HttpStatusCode.BadRequest,
-                            "Value for gender must be All, Male or Female." + gender + " is invalid");
+                        return Request.CreateResponse(HttpStatusCode.BadRequest);
+                        //return Request.CreateErrorResponse(HttpStatusCode.BadRequest,
+                        //    "Value for gender must be All, Male or Female." + gender + " is invalid");
                 }
             }
         }
